@@ -1,27 +1,33 @@
 const express = require("express");
-const gravatar = require("gravatar");
+const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const passport = require("passport");
 
-const jwsSecret = require('../../config/keys').jwsSecret;
-const validateRegisterInput = require('../../validation/register');
-const User = require('../../models/User')
-const router = express.Router();
+const JWS_SECRET = require('../../config/keys').jwsSecret;
+const ADMIN_SECRET = require('../../config/keys').adminSecretPassword;
 
+const User = require('../../models/User');
+const Shelter = require('../../models/Shelter');
+
+router.get('/test', (req, res) => res.json({blah: "blah", crazy: "Admin Works"}) );
 
 router.post('/register', (req, res) => { 
-	console.log(req.body)
+	if (req.body.isAdmin) {
+		if (req.body.adminSecret !== ADMIN_SECRET) {
+			return res.status(403).json({ error: "Forbidden", message: "You don't have permission"})
+		}
+	}
   User.findOne({ email: req.body.email})
   .then((user) => {
   	if(user) {
   		return res.status(400).json({ error: "Email Exists", message: "Email already being used"})
   	} else {
   		populateUserParams(req.body)		  
-		  .then(userParams => {
-			  const newUser = new User(userParams)
-			  newUser.save()
-			  .then(user => res.json(user.basicInfo))
+		  .then(adminParams => {
+			  const newAdmin = new User(adminParams)
+			  newAdmin.save()
+			  .then(admin => res.json(admin))
 			  .catch(err => console.log(err))		  	
 		  })
   	}
@@ -29,15 +35,15 @@ router.post('/register', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
-	const email = req.body.email;
+	const userUsername = req.body.username;
 	const password = req.body.password
-	User.findOne({email})
+	User.findOne({username: userUsername})
 	.then(user => {
 		if(!user) { res.status(404).json({error: "Invalid Email Or Password", message: "Password or Email is incorrect"})}
-		bcrypt.compare(password, user.password)
+		bcrypt.compare(password, user.passwordDigest)
 		.then(isMatch => {
 			if (isMatch) {
-				jwt.sign(user.basicInfo, jwsSecret, { expiresIn: 3600}, (err, token) => {
+				jwt.sign(user.basicInfo, JWS_SECRET, { expiresIn: 3600}, (err, token) => {
 					res.json({
 						success: true,
 						token: "Bearer " + token
@@ -49,15 +55,37 @@ router.post('/login', (req, res) => {
 	})
 })
 
-router.get('/current', passport.authenticate('jwt', { session: false}), (req, res) => {
-	res.json(req.user)
+
+router.post('/register-shelter', passport.authenticate('jwt', { session: false}), (req, res) => {
+	const body = req.body
+	// create new Shelter
+	const shelterParams = {
+		name: body.name, 
+		address: body.address, 
+		phoneNumber: body.phoneNumber, 
+		website: body.website
+	}
+	const newShelter = new Shelter(shelterParams)
+	newShelter.save()
+	.then(() => res.json({newShelter}))
+	// create new User as the sheltersAdmin
+	// save shelter 
+	
 })
 
 const populateUserParams = (reqBody) => {
 	return new Promise((resolve, reject) => {
 		genBcrypt(reqBody.password)
 		.then((hash, err) => {
-			const params = {name: reqBody.name, email: reqBody.email, avatar: gravatar.url({s: '200', r: 'pg', d: 'mm'}), password: hash };
+			const params = { 
+				firstName: reqBody.firstName, 
+				lastName: reqBody.lastName,
+				username: reqBody.username,
+				email: reqBody.email, 
+				passwordDigest: hash,
+				isAdmin: reqBody.isAdmin || false
+
+			};
 			if (hash) { resolve(params) }
 		 	else { reject(err)};		 
 		})
@@ -74,4 +102,5 @@ const genBcrypt = (password, userParams) => {
 		})		
 	})
 }
+
 module.exports = router;

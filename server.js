@@ -8,7 +8,6 @@ const passport = require('passport');
 const users = require("./routes/api/users");
 const posts = require("./routes/api/posts");
 const profiles = require("./routes/api/profiles");
-const admin = require("./routes/api/admin");
 const shelter = require("./routes/api/shelter");
 
 // KEYS & CONSTANT VALUES
@@ -31,7 +30,6 @@ require('./config/passport')(passport);
 app.use('/api/users', users);
 app.use('/api/posts', posts);
 app.use('/api/profiles', profiles);
-app.use('/api/admin', admin);
 app.use('/api/profiles', profiles);
 app.use('/api/shelter', shelter);
 
