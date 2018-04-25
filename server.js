@@ -6,6 +6,8 @@ const passport = require('passport');
 
 // ROUTES
 const users = require("./routes/api/users");
+const admin = require("./routes/api/admin");
+const shelterAdmin = require("./routes/api/shelter-admin");
 const posts = require("./routes/api/posts");
 const profiles = require("./routes/api/profiles");
 const shelter = require("./routes/api/shelter");
@@ -28,10 +30,11 @@ require('./config/passport')(passport);
 
 // CONNECT API ROUTES TO EXPRESS APP
 app.use('/api/users', users);
+app.use('/api/admin', admin);
+app.use('/api/shelter-admins', shelterAdmin);
 app.use('/api/posts', posts);
 app.use('/api/profiles', profiles);
-app.use('/api/profiles', profiles);
-app.use('/api/shelter', shelter);
+app.use('/api/shelters', shelter);
 
 mongoose.connect(DB)
 .then(() => console.log(`Connected to DB at: ${DB}`))

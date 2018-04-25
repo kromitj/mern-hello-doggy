@@ -18,9 +18,9 @@ const ShelterSchema = new Schema({
 		type: String,
 		required: true
 	},
-	ShelterContactId:  {
+	shelterAdminId:  {
 		type: Schema.Types.ObjectId,
-		ref: 'user'
+		ref: 'shelter'
 	},
 });
 ShelterSchema.virtual('basicInfo').get(function () {
