@@ -80,7 +80,7 @@ router.post('/session', (req, res) => {
 						token: "Bearer " + token
 					})					
 				})
-			}	else { res.status(404).json({message: "Dev-username or PASSWORD is wrong"})}
+			}	else { res.status(400).json({message: "Dev-username or PASSWORD is wrong"})}
 		})
 	})
 })
@@ -89,7 +89,6 @@ router.post('/session', (req, res) => {
 // @@TYPE  - GET
 // @@DESC  - Returns all existing shelters
 router.get('/shelters', passport.authenticate('jwt', { session: false}), (req, res) => {
-	console.log("USer: ", req.user)
 	if (req.user.userType.role !== "admin") {
 		return res.status(401).json({ error: "Unauthorized", message: "Dev- User needs to have admin rights"})
 	} else { // used to guard against random role types falling through

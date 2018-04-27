@@ -16,12 +16,32 @@ const user = require('../../models/Shelter');
 const JWS_SECRET = require('../../config/keys').jwsSecret;
 const ADMIN_SECRET = require('../../config/keys').adminSecretPassword;
 
+
+// HELPER FUNCTIONS-----------------------------------------------
+//--------------------------------------------------------------------
+const createUser = require("../../helpers/user-creater");
+console.log(createUser)
 // USER ROUTES -----------------------------------------------------
 //--------------------------------------------------------------------
 const router = express.Router();
 
 router.get('/new', (req, res) => {
 	res.json({message: "Users Login Form"})
+})
+
+router.post('/', (req, res) => { 
+  createUser(req.body)
+  .then((response) => {
+  	console.log(response)
+  	if (response === 'user taken') {
+  		console.log('user Taken --------------')
+  		return res.status(400).json({ error: "Bad Request", message: "Dev - Email already being used"})
+  	} else {
+  		console.log("yooooooooooooooo")
+  		res.status(201).json({ message: "Dev - request has been fulfilled", userId: newUser._id})
+  	}
+  }).catch(err => { res.status(201).json({ error: "Created", message: `Dev - ${err.message}`})})
+
 })
 
 router.post('/', (req, res) => { 
@@ -82,35 +102,8 @@ router.put('/:username', passport.authenticate('jwt', { session: false}), (req, 
 
 // HELPER FUNCTIONS-------------------------------------------------
 //--------------------------------------------------------------------
-const populateUserParams = (reqBody) => {
-	console.log(reqBody)
-	return new Promise((resolve, reject) => {
-		genBcrypt(reqBody.password)
-		.then((hash, err) => {
-			const params = { 
-				firstName: reqBody.firstName, 
-				lastName: reqBody.lastName,
-				username: reqBody.username,
-				email: reqBody.email, 
-				passwordDigest: hash,
-				userType: { role: "basic"}
-			};
-			if (hash) { resolve(params) }
-		 	else { reject(err)};		  
-		})
-	})
-}
 
-const genBcrypt = (password, userParams) => {
-	return new Promise((resolve, reject)=>{
-		bcrypt.genSalt(10, (err, salt) => {
-			bcrypt.hash(password, salt, (err, hash) => {
-				if (hash) { return resolve(hash) }
-				else { return reject(err) }
-			})
-		})		
-	})
-}
+
 
 
 

@@ -42,6 +42,10 @@ UserSchema.statics = {
     userCreateSafeFields: ['firstName', 'lastName', 'avatar']
 };
 
+UserSchema.statics.findByEmail = function(name, cb) {
+    return this.find({ email: new RegExp(name, 'i') }, cb);
+  };
+
 const User = mongoose.model('User', UserSchema);
 
 
