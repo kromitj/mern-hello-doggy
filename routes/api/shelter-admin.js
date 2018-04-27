@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const passport = require("passport");
 const mongoose = require('mongoose');
-
+const _ = require("underscore");
 // MONGOOSE MODELS--------------------------------------------------
 //--------------------------------------------------------------------
 const User = require('../../models/User');
@@ -21,33 +21,56 @@ const ADMIN_SECRET = require('../../config/keys').adminSecretPassword;
 //--------------------------------------------------------------------
 const router = express.Router();
 
-router.get('/new', passport.authenticate('jwt', { session: false}), (req, res) => {
+// @@Route - www.hello-doggy/shelter-admin
+// @@TYPE  - GET
+// @@DE SC  - Returns the info for a shelter-sign-up or sign-in form
+router.get('/', passport.authenticate('jwt', { session: false}), (req, res) => {
 	if (!req.user) {
-		return res.status(400).json({ error: "Sign In or Sign Up", message: "Sign in Or Sign up first then"})
+		return res.status(401).json({ error: "Unauthorized", message: "Dev-Sign in Or Sign up first then try again"})
 	} else {
 		res.json({message: "SHelterAdmin Sign up Form"})
 		
 	}
 })
 
-router.post('/create', passport.authenticate('jwt', { session: false}),(req, res) => {   
+// @@Route - www.hello-doggy/shelter-admin/
+// @@TYPE  - POST
+// @@DESC  - Creates a Shelter and Assignes the User as a Shelter-Admin that needs to be approved by admin
+router.post('/', passport.authenticate('jwt', { session: false}),(req, res) => {   
   if (!req.user) {
-		return res.status(400).json({ error: "Sign In or Sign Up", message: "Sign in Or Sign up first then"})
+		return res.status(401).json({ error: "Unauthorized", message: "Dev-Sign in Or Sign up first then try again"})
 	} else {
-  req.user.role = "shelter-admin-init"
+	const shelterParams = _.pick(req.body, Shelter.shelterCreateSafeFields);
+  const newShelter = new Shelter(shelterParams);
+
+  newShelter.shelterAdminId = req.user_id;
+
+  req.user.userType = {
+  	role: "shelter-admin",
+  	approved: false,
+  	shelterId: newShelter._id
+  }
+
   req.user.save()
+  newShelter.save()
   .then(user => res.json(user.basicInfo))
   .catch(err => console.log(err))		
   }  	
 })
 
-router.post('/login', (req, res) => {
-	const userUsername = req.body.username;
+router.get('/session', (req, res) => {
+	res.json({message: "Shelter Admin Login Form"})
+})
+
+router.post('/session', (req, res) => {
+	const username = req.body.username;
 	const password = req.body.password;
-	console.log(req.body)
-	User.findOne({username: userUsername})
+
+	User.findOne({username: username})
 	.then(user => {
-		if(!user) { res.status(404).json({error: "Invalid Email Or Password", message: "Password or Email is incorrect"})}
+		if(!user) { res.status(400).json({error: "Bad Request", message: "Dev-Password or USERNAME is incorrect"})}
+		if (!hasShelterAdminRights(user)) res.status(401).json({ error: "Unauthorized", message: "Dev-Wrong Signed in User need Shelter Admin rights"})
+		
 		bcrypt.compare(password, user.passwordDigest)
 		.then(isMatch => {
 			if (isMatch) {
@@ -57,23 +80,31 @@ router.post('/login', (req, res) => {
 						token: "Bearer " + token
 					})					
 				})
-			}
-				else { res.json({message: "Failure"})}
+			} else { res.status(400).json({error: "Bad Request", message: "Dev-PASSWORD or username is incorrect"})}
 		})
 	})
 })
 
+// hello-doggy/shelter-admin/kromitj/shelter
 router.get('/:username/shelter', passport.authenticate('jwt', { session: false}), (req, res) => {
-	console.log(req.user)
-	Shelter.findById(req.user.shelterId)
+	if (!hasShelterAdminRights(user)) res.status(401).json({ error: "Unauthorized", message: "Dev-Wrong Signed in User need Shelter Admin rights"})
+		
+	Shelter.findById(req.user.userType.shelterId)
 	.then(shelter => {
 		res.json(shelter)
 	})
 })
 
+router.get('/:username/animals/new', passport.authenticate('jwt', { session: false}), (req, res) => {
+	if (!hasShelterAdminRights(user)) res.status(401).json({ error: "Unauthorized", message: "Dev-Wrong Signed in User need Shelter Admin rights"})
+	else {
+		res.json({message: "Shelter Admin Animal new"})		
+	}
+})
+
 router.post('/:username/animal/create', passport.authenticate('jwt', { session: false}), (req, res) => {
-	console.log("Doggie: ", req.user.isShelterAdmin)
-	if(req.user.isShelterAdmin) {
+	if (!hasShelterAdminRights(user)) res.status(401).json({ error: "Unauthorized", message: "Dev-Wrong Signed in User need Shelter Admin rights"})
+	else {
 		req.body.shelterId = req.user._id;
 		const newDog = new Animal(req.body)
 		newDog.save()
@@ -100,8 +131,10 @@ const populateUserParams = (reqBody) => {
 				username: reqBody.username,
 				email: reqBody.email, 
 				passwordDigest: hash,
-				isAdmin: reqBody.isAdmin || false,
-				role: "shelter-admin-init"
+				userRole: {
+					role: "shelter-admin",
+					approved: false
+				}
 			};
 			if (hash) { resolve(params) }
 		 	else { reject(err)};		 
@@ -118,6 +151,11 @@ const genBcrypt = (password, userParams) => {
 			})
 		})		
 	})
+}
+
+const hasShelterAdminRights = (user) => {
+	console.log(user.userType.role === "shelter-admin" && user.userType.approved === true)
+	return (user.userType.role === "shelter-admin" && user.userType.approved === true)
 }
 
 module.exports = router;

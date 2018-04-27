@@ -4,11 +4,9 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
  firstName: {
  	type: String,
- 	required: true
  },
  lastName: {
- 	type: String,
- 	required: true
+ 	type: String
  },
  email: {
  	type: String,
@@ -30,28 +28,20 @@ const UserSchema = new Schema({
  	type: Date,
  	default: Date.now()
  },
- isAdmin: {
- 	type: Boolean,
- 	default: false,
+ userType: {
+ 	type: {},
  	required: true
- },
- isShelterAdmin: {
- 	type: Boolean,
- 	defualt: false,
- },
- shelterId: {
- 	type: Schema.Types.ObjectId,
-	ref: 'shelter'
- },
- role: {
- 	type: String
  }
 });
 UserSchema.virtual('basicInfo').get(function () {
   return {id: this._id, isAdmin: this.isAdmin};
 });
+UserSchema.statics = {
+    userCreateSafeFields: ['email', 'firstName', 'lastName', 'avatar']
+};
 
 const User = mongoose.model('User', UserSchema);
+
 
 module.exports = User;
 

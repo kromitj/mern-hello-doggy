@@ -20,35 +20,42 @@ const ADMIN_SECRET = require('../../config/keys').adminSecretPassword;
 //--------------------------------------------------------------------
 const router = express.Router();
 
-router.post('/register', (req, res) => { 
-	if (req.body.idAdmin == true) { return res.status(400).json({ error: "Internal Error", message: "Something went wrong"})}
+router.get('/new', (req, res) => {
+	res.json({message: "Users Login Form"})
+})
+
+router.post('/', (req, res) => { 
   User.findOne({ email: req.body.email})
   .then((user) => {
   	if(user) {
-  		return res.status(400).json({ error: "Email Exists", message: "Email already being used"})
+  		return res.status(400).json({ error: "Bad Request", message: "Dev - Email already being used"})
   	} else {
   		populateUserParams(req.body)		  
-		  .then(adminParams => {
-			  const newAdmin = new User(adminParams)
-			  newAdmin.save()
-			  .then(admin => res.json(admin))
-			  .catch(err => console.log(err))		  	
+		  .then(userParams => {
+			  const newUser = new User(userParams)
+			  newUser.save()
+			  .then(user => res.status(201).json({ message: "Dev - request has been fulfilled", userId: newUser._id}))
+			  .catch((err) => {
+			  	console.log(err)
+			  	res.status(201).json({ error: "Created", message: `Dev - ${err.message}`})
+			  })
 		  })
   	}
   })
 })
 
-router.post('/login', (req, res) => {
+router.get('/session', (req, res) => {
+	res.json({message: "Users Login Form"})
+})
+
+router.post('/session', (req, res) => {
 	const userUsername = req.body.username;
 	const password = req.body.password;
-	console.log(userUsername)
 	User.findOne({username: userUsername})
 	.then(user => {
-		console.log(user)
-		if(!user) { res.status(404).json({error: "Invalid Email Or Password", message: "Password or Email is incorrect"})}
+		if(!user) { res.status(400).json({error: "Bad Request", message: "Dev - Password or USERNAME is incorrect"})}
 		bcrypt.compare(password, user.passwordDigest)
 		.then(isMatch => {
-				console.log(isMatch)
 			if (isMatch) {
 				jwt.sign(user.basicInfo, JWS_SECRET, { expiresIn: 3600}, (err, token) => {
 					res.json({
@@ -56,8 +63,7 @@ router.post('/login', (req, res) => {
 						token: "Bearer " + token
 					})					
 				})
-			}
-				else { res.json({message: "Failure"})}
+			}	else { res.status(400).json({error: "Bad Request", message: "Dev - PASSWORD or username is incorrect"})}
 		})
 	})
 })
@@ -67,6 +73,7 @@ router.post('/login', (req, res) => {
 // HELPER FUNCTIONS-------------------------------------------------
 //--------------------------------------------------------------------
 const populateUserParams = (reqBody) => {
+	console.log(reqBody)
 	return new Promise((resolve, reject) => {
 		genBcrypt(reqBody.password)
 		.then((hash, err) => {
@@ -76,10 +83,10 @@ const populateUserParams = (reqBody) => {
 				username: reqBody.username,
 				email: reqBody.email, 
 				passwordDigest: hash,
-				isAdmin: reqBody.isAdmin || false
+				userType: { role: "basic"}
 			};
 			if (hash) { resolve(params) }
-		 	else { reject(err)};		 
+		 	else { reject(err)};		  
 		})
 	})
 }
@@ -88,8 +95,8 @@ const genBcrypt = (password, userParams) => {
 	return new Promise((resolve, reject)=>{
 		bcrypt.genSalt(10, (err, salt) => {
 			bcrypt.hash(password, salt, (err, hash) => {
-				if (hash) { resolve(hash) }
-				else { reject(err) }
+				if (hash) { return resolve(hash) }
+				else { return reject(err) }
 			})
 		})		
 	})

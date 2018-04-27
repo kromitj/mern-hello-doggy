@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const passport = require("passport");
 const mongoose = require('mongoose');
+const _ = require('underscore');
 
 // MONGOOSE MODELS--------------------------------------------------
 //--------------------------------------------------------------------
@@ -20,19 +21,26 @@ const ADMIN_SECRET = require('../../config/keys').adminSecretPassword;
 //--------------------------------------------------------------------
 const router = express.Router();
 
-router.post('/register', (req, res) => { 
-	console.log("Indide of Admin Register")
-	if (req.body.isAdmin) { // replace with adminTest
-		if (req.body.adminSecret !== ADMIN_SECRET) {
-			return res.status(403).json({ error: "Forbidden", message: "You don't have permission"})
-		}
+// @@Route - www.hello-doggy/admin
+// @@TYPE  - GET
+// @@DESC  - Returns the info for a sign-up or sign-in form
+router.get('/', (req, res) => {
+	res.json({message: "Admin sign up "})
+})
+
+// @@Route - www.hello-doggy/admin
+// @@TYPE  - POST
+// @@DESC  - Creates a new Admin, wont be used in production becuase their will only be one master admin
+router.post('/', (req, res) => { 
+	if (req.body.adminSecret !== ADMIN_SECRET) {
+		return res.status(401).json({ error: "Unauthorized", message: "Dev-Wrong Admin secret"})
 	}
-  User.findOne({ email: req.body.email})
+  User.findOne({ isAdmin: true})
   .then((user) => {
   	if(user) {
-  		return res.status(400).json({ error: "Email Exists", message: "Email already being used"})
+  		return res.status(401).json({ error: "Unauthorized", message: "Dev-Can only have one admin"})
   	} else {
-  		populateUserParams(req.body)		  
+  		populateAdminParams(req.body)		  
 		  .then(adminParams => {
 			  const newAdmin = new User(adminParams)
 			  newAdmin.save()
@@ -43,21 +51,28 @@ router.post('/register', (req, res) => {
   })
 })
 
-router.post('/login', (req, res) => {
+// @@Route - www.hello-doggy/admin/session
+// @@TYPE  - GET
+// @@DESC  - Returns the info for a log-up form
+router.get('/session', (req, res) => {
+	res.json({message: "Admin sign in "})
+})
+
+// @@Route - www.hello-doggy/admin/session
+// @@TYPE  - POST
+// @@DESC  - Creates a session for an Admin
+router.post('/session', (req, res) => {
 	if (req.body.adminSecret !== ADMIN_SECRET ) {
-		return res.status(403).json({ error: "Internal Error", message: "Somthing Went Wrong"})
+		return res.status(401).json({ error: "Unauthorized", message: "Dev-Wrong Signed in User need Admin rights"})
 	}
 	const userUsername = req.body.username;
 	const password = req.body.password;
-	console.log(userUsername)
+
 	User.findOne({username: userUsername})
 	.then(user => {
-		console.log(user)
-		if(!user) { res.status(404).json({error: "Invalid Email Or Password", message: "Password or Email is incorrect"})}
+		if(!user) { res.status(404).json({error: "Invalid Email Or Password", message: "Dev-USERNAME or password is incorrect"})}
 		bcrypt.compare(password, user.passwordDigest)
 		.then(isMatch => {
-				console.log(isMatch)
-				console.log(user.basicInfo)
 			if (isMatch) {
 				jwt.sign(user.basicInfo, JWS_SECRET, { expiresIn: 3600}, (err, token) => {
 					res.json({
@@ -65,15 +80,19 @@ router.post('/login', (req, res) => {
 						token: "Bearer " + token
 					})					
 				})
-			}
-				else { res.json({message: "Failure"})}
+			}	else { res.status(404).json({message: "Dev-username or PASSWORD is wrong"})}
 		})
 	})
 })
+
+// @@Route - www.hello-doggy/admin/shelters
+// @@TYPE  - GET
+// @@DESC  - Returns all existing shelters
 router.get('/shelters', passport.authenticate('jwt', { session: false}), (req, res) => {
-	if (req.user.isAdmin !== true) {
-		return res.status(403).json({ error: "Forbidden", message: "You don't have permission"})
-	} else {
+	console.log("USer: ", req.user)
+	if (req.user.userType.role !== "admin") {
+		return res.status(401).json({ error: "Unauthorized", message: "Dev- User needs to have admin rights"})
+	} else { // used to guard against random role types falling through
 		Shelter.find({})
 		.then(shelters => {
 			res.json(shelters)
@@ -81,54 +100,119 @@ router.get('/shelters', passport.authenticate('jwt', { session: false}), (req, r
 	}
 })
 
-router.get('/shelters/:id', passport.authenticate('jwt', { session: false}), (req, res) => {
-	if (req.user.isAdmin !== true) {
+// @@Route - www.hello-doggy/admin/shelter/new
+// @@TYPE  - GET
+// @@DESC  - Returns the info for a new shelter form
+router.get('/shelters/new', passport.authenticate('jwt', { session: false}), (req, res) => {
+	if (req.user.userType.role !== "admin") {
+		return res.status(401).json({ error: "Unauthorized", message: "Dev- User needs to have admin rights"})
+	} else {
+	res.json({message: "Admin create a new shelter Form"})
+	}
+})
+
+// @@Route - www.hello-doggy/admin/shelter
+// @@TYPE  - POST
+// @@DESC  - Creates a new Shelter
+router.post('/shelters/', passport.authenticate('jwt', { session: false}), (req, res) => {
+	if (req.user.userType.role !== "admin") {
 		return res.status(403).json({ error: "Forbidden", message: "You don't have permission"})
+	} else {
+		const body = req.body;
+
+		const shelterParams = {
+			name: body.name, 
+			address: body.address, 
+			phoneNumber: body.phoneNumber, 
+			website: body.website
+		}
+		const newShelter = new Shelter(shelterParams)
+		newShelter.save()
+		.then(() => res.json({newShelter}))			
+	}
+})
+
+// @@Route - www.hello-doggy/admin/shelter/unapproved
+// @@TYPE  - GET
+// @@DESC  - Returnes all Shelter that havn't been approved yet
+router.get('/shelters/unapproved', passport.authenticate('jwt', { session: false}), (req, res) => {
+	Shelter.find({adminApproved: false})
+	.then(unapprovedShelters => {
+		res.json(unapprovedShelters)
+	})
+})
+
+// @@Route - www.hello-doggy/admin/shelters/:id
+// @@TYPE  - GET
+// @@DESC  - Returns the info of a single shelter using it's unique id
+router.get('/shelters/:id', passport.authenticate('jwt', { session: false}), (req, res) => {
+	if (req.user.userType.role !== "admin") {
+		return res.status(401).json({ error: "Unauthorized", message: "Dev-Signed in User neeeds admin rights"})
 	} else {
 		Shelter.findById(req.params.id)
 		.then(shelter => {
-			res.json(shelter)
+			res.json(shelter )
+		}).catch(err => {
+			res.status(400).json({ error: 400, message: "Dev - Invalid form info"})
 		})
 	}
 })
 
+// @@Route - www.hello-doggy/admin/shelters/:id
+// @@TYPE  - PUT
+// @@DESC  -  Updates a shelters attributes using its unique id
+router.put('/shelters/:id', passport.authenticate('jwt', { session: false}), (req, res) => {
+	if (req.user.userType.role !== "admin") {
+		return res.status(401).json({ error: "Unauthorized", message: "Dev-Signed in User neeeds admin rights"})
+	} else {
+	const fieldsToUpdate = _.pick(req.body, Shelter.shelterCreateSafeFields);
+		const shelterId = req.params.id
+		Shelter.findByIdAndUpdate(shelterId, fieldsToUpdate, (err, shelter) => {
+	    if(err) return res.json(err);
 
-router.post('/shelters/create', passport.authenticate('jwt', { session: false}), (req, res) => {
-		if (req.user.isAdmin !== true) {
-			return res.status(403).json({ error: "Forbidden", message: "You don't have permission"})
+	    res.json({ success: true});
+		});
+	}
+})
+// @@Route - www.hello-doggy/admin/shelters/:id
+// @@TYPE  - DELETE
+// @@DESC  - Delets a shelter useing its unique id
+router.delete('/shelters/:id', passport.authenticate('jwt', { session: false}), (req, res) => {
+		if (req.user.userType.role !== "admin") {
+			return res.status(401).json({ error: "Unauthorized", message: "Dev- Signed un User needs Admin rights"})
 		} else {
-			const body = req.body;
-
-			const shelterParams = {
-				name: body.name, 
-				address: body.address, 
-				phoneNumber: body.phoneNumber, 
-				website: body.website
-			}
-			const newShelter = new Shelter(shelterParams)
-			newShelter.save()
-			.then(() => res.json({newShelter}))			
-		}
-	
+			const shelterId = mongoose.Types.ObjectId(req.params.id)
+			Shelter.findByIdAndRemove(shelterId, (err, shelter) => { 
+		    if (shelter === null) return res.status(400).send({error: "Bad Request", message: "Dev- Invalid Shelter ID"});
+		    
+		    return res.status(200).json({message: `${shelterId} was Successfuly Deleted`});
+			});				
+		}	
 })
 
-router.post('/:shelter/:shelter-admin', passport.authenticate('jwt', { session: false}), (req, res) => {
-	
-	if (req.user.isAdmin !== true || req.body.adminSecret !== ADMIN_SECRET) {
-			return res.status(403).json({ error: "Forbidden", message: "You don't have permission"})
+
+// @@Route - www.hello-doggy/admin/shelters/:shelterId/:shelterAdminId
+// @@TYPE  - Put
+// @@DESC  - Assiges a shelterAdmin to a Shelter
+router.put('/shelters/:shelter/:shelterAdmin', passport.authenticate('jwt', { session: false}), (req, res) => {
+	if (req.user.userType.role !== "admin" || req.body.adminSecret !== ADMIN_SECRET) {
+			return res.status(401).json({ error: "Unauthorized", message: "Dev-Signed In User needs Admin rights"})
 		} else {
-			const body = req.body;
-			const shelterAdminId = mongoose.Types.ObjectId(body.shelterAdminId)
-			const ShelterId = mongoose.Types.ObjectId(body.shelterId)
+			const ShelterId = mongoose.Types.ObjectId(req.params.shelter)
+			const shelterAdminId = mongoose.Types.ObjectId(req.params.shelterAdmin)
 
 			User.findById(shelterAdminId)
 			.then((shelterAdmin) => {
-				shelterAdmin.isShelterAdmin = true
-				shelterAdmin.role = "shelter-admin-verified"
+				shelterAdmin.userType = {
+					role: "shelter-admin",
+					shelterId: ShelterId,
+					approved: true
+				}
+
 				Shelter.findById(ShelterId)
 				.then((shelter) => {
 					shelter.shelterAdminId = shelterAdmin._id;
-					shelterAdmin.shelterId = shelter._id
+					shelter.adminApproved = true;
 					shelterAdmin.save()
 					shelter.save()
 					.then(() => res.json(shelter))
@@ -140,7 +224,9 @@ router.post('/:shelter/:shelter-admin', passport.authenticate('jwt', { session: 
 
 // HELPER FUNCTIONS-------------------------------------------------
 //--------------------------------------------------------------------
-const populateUserParams = (reqBody) => {
+
+// Used 
+const populateAdminParams = (reqBody) => {
 	return new Promise((resolve, reject) => {
 		genBcrypt(reqBody.password)
 		.then((hash, err) => {
@@ -150,8 +236,7 @@ const populateUserParams = (reqBody) => {
 				username: reqBody.username,
 				email: reqBody.email, 
 				passwordDigest: hash,
-				isAdmin: reqBody.isAdmin || false,
-				role: "admin"
+				userType: { role: "admin"}
 			};
 			if (hash) { resolve(params) }
 		 	else { reject(err)};		 
@@ -170,11 +255,14 @@ const genBcrypt = (password, userParams) => {
 	})
 }
 
-const newUserIsAdminValidation = (user) => {
-
+const hasShelterAdminRights = (user) => {
+	console.log(user.userType.role === "admin")
+	return (user.userType.role === "admin")
 }
-const newUserIsUnique = (user) => {
 
-}
+
+
+
+
 
 module.exports = router;

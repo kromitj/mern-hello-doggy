@@ -22,10 +22,19 @@ const ShelterSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'shelter'
 	},
+	adminApproved: {
+		type: Boolean,
+		required: true,
+		default: false
+	}
 });
 ShelterSchema.virtual('basicInfo').get(function () {
   return {id: this._id};
 });
+
+ShelterSchema.statics = {
+    shelterCreateSafeFields: ['name', 'address', 'phoneNumber', 'website']
+};
 
 
 
