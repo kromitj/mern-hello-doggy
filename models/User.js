@@ -33,11 +33,13 @@ const UserSchema = new Schema({
  	required: true
  }
 });
+
 UserSchema.virtual('basicInfo').get(function () {
   return {id: this._id, isAdmin: this.isAdmin};
 });
+
 UserSchema.statics = {
-    userCreateSafeFields: ['email', 'firstName', 'lastName', 'avatar']
+    userCreateSafeFields: ['firstName', 'lastName', 'avatar']
 };
 
 const User = mongoose.model('User', UserSchema);

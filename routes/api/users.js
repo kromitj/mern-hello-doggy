@@ -5,11 +5,11 @@ const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const passport = require("passport");
 const mongoose = require('mongoose');
-
+const _ = require("underscore");
 // MONGOOSE MODELS--------------------------------------------------
 //--------------------------------------------------------------------
 const User = require('../../models/User');
-const Shelter = require('../../models/Shelter');
+const user = require('../../models/Shelter');
 
 // CONSTANT VARIABLES-----------------------------------------------
 //--------------------------------------------------------------------
@@ -66,6 +66,16 @@ router.post('/session', (req, res) => {
 			}	else { res.status(400).json({error: "Bad Request", message: "Dev - PASSWORD or username is incorrect"})}
 		})
 	})
+})
+
+router.put('/:username', passport.authenticate('jwt', { session: false}), (req, res) => {
+	if (req.params.username !== req.user.username) { res.json("Dev - messsage loged in user doesn't match user being modified")}
+		const userParmsToUpdate = _.pick(req.body, User.userCreateSafeFields)
+		User.findByIdAndUpdate(req.user._id, userParmsToUpdate, (err, user) => {
+	    if(err) return res.json(err);
+
+	    res.json({ success: true});
+		});
 })
 
 
