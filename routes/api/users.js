@@ -9,18 +9,18 @@ const _ = require("underscore");
 // MONGOOSE MODELS--------------------------------------------------
 //--------------------------------------------------------------------
 const User = require('../../models/User');
-const user = require('../../models/Shelter');
+const Shelter = require('../../models/Shelter');
 
 // CONSTANT VARIABLES-----------------------------------------------
 //--------------------------------------------------------------------
 const JWS_SECRET = require('../../config/keys').jwsSecret;
 const ADMIN_SECRET = require('../../config/keys').adminSecretPassword;
-
+const errorMessages = require('../status-messages')
 
 // HELPER FUNCTIONS-----------------------------------------------
 //--------------------------------------------------------------------
 const createUser = require("../../helpers/user-creater");
-console.log(createUser)
+
 // USER ROUTES -----------------------------------------------------
 //--------------------------------------------------------------------
 const router = express.Router();
@@ -30,61 +30,34 @@ router.get('/new', (req, res) => {
 })
 
 router.post('/', (req, res) => { 
-  createUser(req.body)
-  .then((response) => {
-  	console.log(response)
-  	if (response === 'user taken') {
-  		console.log('user Taken --------------')
-  		return res.status(400).json({ error: "Bad Request", message: "Dev - Email already being used"})
-  	} else {
-  		console.log("yooooooooooooooo")
-  		res.status(201).json({ message: "Dev - request has been fulfilled", userId: newUser._id})
-  	}
-  }).catch(err => { res.status(201).json({ error: "Created", message: `Dev - ${err.message}`})})
-
+  createUser(req.body, "user")
+	.then(response => {
+		if (response.success === false) {
+			const msg = errorMessages[response.error];		
+			return res.status(msg.status).json({ error: msg.error, message: msg.message})
+		} else if (response.success) {
+				res.json({success: true, message: "User was successfuly created"})
+		} else { 
+			console.log("Create User wasn't caught: it returned: ", response)
+			return res.status(500).json({ error: "Internal Error", message: "Dev - Something Went Wong"})
+		}
+	}).catch(err => console.log(err))	
 })
 
-router.post('/', (req, res) => { 
-  User.findOne({ email: req.body.email})
-  .then((user) => {
-  	if(user) {
-  		return res.status(400).json({ error: "Bad Request", message: "Dev - Email already being used"})
-  	} else {
-  		populateUserParams(req.body)		  
-		  .then(userParams => {
-			  const newUser = new User(userParams)
-			  newUser.save()
-			  .then(user => res.status(201).json({ message: "Dev - request has been fulfilled", userId: newUser._id}))
-			  .catch((err) => {
-			  	console.log(err)
-			  	res.status(201).json({ error: "Created", message: `Dev - ${err.message}`})
-			  })
-		  })
-  	}
-  })
-})
 
 router.get('/session', (req, res) => {
 	res.json({message: "Users Login Form"})
 })
 
 router.post('/session', (req, res) => {
-	const userUsername = req.body.username;
-	const password = req.body.password;
-	User.findOne({username: userUsername})
-	.then(user => {
-		if(!user) { res.status(400).json({error: "Bad Request", message: "Dev - Password or USERNAME is incorrect"})}
-		bcrypt.compare(password, user.passwordDigest)
-		.then(isMatch => {
-			if (isMatch) {
-				jwt.sign(user.basicInfo, JWS_SECRET, { expiresIn: 3600}, (err, token) => {
-					res.json({
-						success: true,
-						token: "Bearer " + token
-					})					
-				})
-			}	else { res.status(400).json({error: "Bad Request", message: "Dev - PASSWORD or username is incorrect"})}
-		})
+	signInUser(req.body.username, req.body.password, jwt)
+	.then(response => {
+		if (!response.success) {
+			const resp = signInStateTable[response.error]
+			res.status(resp.status).json({error: resp.error, message: resp.message})
+		} else {
+			res.json({ success: true, token: `Bearer ${response.payLoad}`})
+		}
 	})
 })
 
@@ -102,7 +75,28 @@ router.put('/:username', passport.authenticate('jwt', { session: false}), (req, 
 
 // HELPER FUNCTIONS-------------------------------------------------
 //--------------------------------------------------------------------
+const signInStateTable = {
+	"bad username" : { status: 400, error: "Bad Request", "message": "Dev - Password or USERNAME is incorrect"},
+	"wrong password": { status: 400, error: "Bad Request", "message": "Dev - PASSWORD or username is incorrect"}
+}
 
+const signInUser = (username, password) => {
+	return new Promise( (resolve, reject) => {
+		User.findOne({username})
+		.then(user => {
+			if (!user) { resolve({ success: false , error: "bad username"}) }
+			bcrypt.compare(password, user.passwordDigest)
+			.then(isMatch => {
+				if (isMatch) {
+					
+					jwt.sign(user.basicInfo, JWS_SECRET, { expiresIn: 3600}, (err, token) => {
+						resolve({ success: true, payLoad: token})
+					})
+				} else { resolve({success: false, error: "wrong password"})}
+			}).catch(err => reject({success: false, error: err}))
+		}).catch((err) => reject({success: false, error: err}))
+	})
+}
 
 
 

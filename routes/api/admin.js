@@ -16,6 +16,11 @@ const Shelter = require('../../models/Shelter');
 //--------------------------------------------------------------------
 const JWS_SECRET = require('../../config/keys').jwsSecret;
 const ADMIN_SECRET = require('../../config/keys').adminSecretPassword;
+const errorMessages = require('../status-messages')
+
+// HELPER FUNCTIONS-----------------------------------------------
+//--------------------------------------------------------------------
+const createUser = require("../../helpers/user-creater");
 
 // USER ROUTES -----------------------------------------------------
 //--------------------------------------------------------------------
@@ -31,24 +36,37 @@ router.get('/', (req, res) => {
 // @@Route - www.hello-doggy/admin
 // @@TYPE  - POST
 // @@DESC  - Creates a new Admin, wont be used in production becuase their will only be one master admin
+// router.post('/', (req, res) => { 
+// 	createUser(req.body, "admin")
+// 	.then(response => {
+// 		if (response === "invalid admin secret") {
+// 			return res.status(401).json({ error: "Unauthorized", message: "Dev-Wrong Admin secret"})
+// 		} else if (response === "admin exists") {
+// 			return res.status(401).json({ error: "Unauthorized", message: "Dev-Can only have one admin"})
+// 		} else if (response === "email taken") { 
+// 			return res.status(400).json({ error: "Bad Request", message: "Dev - Email already being used"})
+// 		} else { 
+// 			console.log("Create User wasn't caught: it returned: ", response)
+// 			return res.status(500).json({ error: "Internal Error", message: "Dev - Something Went Wong"})
+// 		}
+// 	}).catch(err => console.log(err))	
+// })
+
 router.post('/', (req, res) => { 
-	if (req.body.adminSecret !== ADMIN_SECRET) {
-		return res.status(401).json({ error: "Unauthorized", message: "Dev-Wrong Admin secret"})
-	}
-  User.findOne({ isAdmin: true})
-  .then((user) => {
-  	if(user) {
-  		return res.status(401).json({ error: "Unauthorized", message: "Dev-Can only have one admin"})
-  	} else {
-  		populateAdminParams(req.body)		  
-		  .then(adminParams => {
-			  const newAdmin = new User(adminParams)
-			  newAdmin.save()
-			  .then(admin => res.json(admin))
-			  .catch(err => console.log(err))		  	
-		  })
-  	}
-  })
+	createUser(req.body, "admin")
+	.then(response => {
+		if (response.success === false) {
+			const msg = errorMessages[response.error];	
+			console.log(errorMessages)
+			console.log(msg)	
+			return res.status(msg.status).json({ error: msg.error, message: msg.message})
+		} else if (response.success) {
+				res.json({success: true, message: "User was successfuly created"})
+		} else { 
+			console.log("Create User wasn't caught: it returned: ", response)
+			return res.status(500).json({ error: "Internal Error", message: "Dev - Something Went Wong"})
+		}
+	}).catch(err => console.log(err))	
 })
 
 // @@Route - www.hello-doggy/admin/session
@@ -224,35 +242,7 @@ router.put('/shelters/:shelter/:shelterAdmin', passport.authenticate('jwt', { se
 // HELPER FUNCTIONS-------------------------------------------------
 //--------------------------------------------------------------------
 
-// Used 
-const populateAdminParams = (reqBody) => {
-	return new Promise((resolve, reject) => {
-		genBcrypt(reqBody.password)
-		.then((hash, err) => {
-			const params = { 
-				firstName: reqBody.firstName, 
-				lastName: reqBody.lastName,
-				username: reqBody.username,
-				email: reqBody.email, 
-				passwordDigest: hash,
-				userType: { role: "admin"}
-			};
-			if (hash) { resolve(params) }
-		 	else { reject(err)};		 
-		})
-	})
-}
 
-const genBcrypt = (password, userParams) => {
-	return new Promise((resolve, reject)=>{
-		bcrypt.genSalt(10, (err, salt) => {
-			bcrypt.hash(password, salt, (err, hash) => {
-				if (hash) { resolve(hash) }
-				else { reject(err) }
-			})
-		})		
-	})
-}
 
 const hasShelterAdminRights = (user) => {
 	console.log(user.userType.role === "admin")

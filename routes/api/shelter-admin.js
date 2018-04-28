@@ -16,22 +16,11 @@ const Animal = require('../../models/Animal');
 //--------------------------------------------------------------------
 const JWS_SECRET = require('../../config/keys').jwsSecret;
 const ADMIN_SECRET = require('../../config/keys').adminSecretPassword;
+const errorMessages = require('../status-messages')
 
 // USER ROUTES -----------------------------------------------------
 //--------------------------------------------------------------------
 const router = express.Router();
-
-// @@Route - www.hello-doggy/shelter-admin
-// @@TYPE  - GET
-// @@DE SC  - Returns the info for a shelter-sign-up or sign-in form
-// router.get('/', passport.authenticate('jwt', { session: false}), (req, res) => {
-// 	if (!req.user) {
-// 		return res.status(401).json({ error: "Unauthorized", message: "Dev-Sign in Or Sign up first then try again"})
-// 	} else {
-// 		res.json({message: "SHelterAdmin Sign up Form"})
-		
-// 	}
-// })
 
 router.get('/', (req, res) => {
 	res.json({message: "SHelterAdmin Sign up Form"})
@@ -41,6 +30,7 @@ router.get('/', (req, res) => {
 // @@TYPE  - POST
 // @@DESC  - Creates a Shelter and Assignes the User as a Shelter-Admin that needs to be approved by admin
 router.post('/', passport.authenticate('jwt', { session: false}),(req, res) => {   
+
   if (!req.user) {
 		return res.status(401).json({ error: "Unauthorized", message: "Dev-Sign in Or Sign up first then try again"})
 	} else {
