@@ -41,7 +41,9 @@ router.post('/', (req, res) => {
 			console.log("Create User wasn't caught: it returned: ", response)
 			return res.status(500).json({ error: "Internal Error", message: "Dev - Something Went Wong"})
 		}
-	}).catch(err => console.log(err))	
+	}).catch(err => {
+		res.json({success: false, error: err.payload.name, message: err.payload.message})
+		console.log(err)})	
 })
 
 

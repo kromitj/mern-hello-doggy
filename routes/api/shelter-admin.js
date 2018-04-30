@@ -48,7 +48,9 @@ router.post('/', passport.authenticate('jwt', { session: false}),(req, res) => {
   req.user.save()
   newShelter.save()
   .then(user => res.json(user.basicInfo))
-  .catch(err => console.log(err))		
+  .catch(err => {
+		res.json({success: false, error: err.name, message: err.message})
+  	console.log(err)})		
   }  	
 })
 

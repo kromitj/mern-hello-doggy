@@ -33,32 +33,11 @@ router.get('/', (req, res) => {
 	res.json({message: "Admin sign up "})
 })
 
-// @@Route - www.hello-doggy/admin
-// @@TYPE  - POST
-// @@DESC  - Creates a new Admin, wont be used in production becuase their will only be one master admin
-// router.post('/', (req, res) => { 
-// 	createUser(req.body, "admin")
-// 	.then(response => {
-// 		if (response === "invalid admin secret") {
-// 			return res.status(401).json({ error: "Unauthorized", message: "Dev-Wrong Admin secret"})
-// 		} else if (response === "admin exists") {
-// 			return res.status(401).json({ error: "Unauthorized", message: "Dev-Can only have one admin"})
-// 		} else if (response === "email taken") { 
-// 			return res.status(400).json({ error: "Bad Request", message: "Dev - Email already being used"})
-// 		} else { 
-// 			console.log("Create User wasn't caught: it returned: ", response)
-// 			return res.status(500).json({ error: "Internal Error", message: "Dev - Something Went Wong"})
-// 		}
-// 	}).catch(err => console.log(err))	
-// })
-
 router.post('/', (req, res) => { 
 	createUser(req.body, "admin")
 	.then(response => {
 		if (response.success === false) {
 			const msg = errorMessages[response.error];	
-			console.log(errorMessages)
-			console.log(msg)	
 			return res.status(msg.status).json({ error: msg.error, message: msg.message})
 		} else if (response.success) {
 				res.json({success: true, message: "User was successfuly created"})
@@ -66,7 +45,10 @@ router.post('/', (req, res) => {
 			console.log("Create User wasn't caught: it returned: ", response)
 			return res.status(500).json({ error: "Internal Error", message: "Dev - Something Went Wong"})
 		}
-	}).catch(err => console.log(err))	
+	}).catch(err => {
+		res.json({success: false, error: err.payload.name, message: err.payload.message})
+		console.log(err)
+	})	
 })
 
 // @@Route - www.hello-doggy/admin/session

@@ -42,5 +42,4 @@ mongoose.connect(DB)
 
 app.get('/', (req, res) => res.send("Hello WOrld"));
 
-
 app.listen(PORT, console.log(`Server running on port: ${PORT}`));
