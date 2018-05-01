@@ -1,0 +1,39 @@
+.landing-main { 
+    padding-top: 100px; 
+}
+
+.no-top-margin {
+	margin-top: 0px;
+}
+
+.row-centered {
+    text-align:center;
+}
+.col-centered {
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+}
+.float-right {
+	float:right;
+}
+.float-left {
+	float: left;
+}
+.no-padding-left {
+	padding-left: 0px;
+}
+
+.city-btn {
+   text-align: right;
+}
+.dog-of-week {
+	padding-top: 100px;
+	padding-bottom: 100px;
+}
+
+.img-center = {
+	margin: 0 auto;
+}
