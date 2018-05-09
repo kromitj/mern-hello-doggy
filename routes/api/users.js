@@ -30,6 +30,7 @@ router.get('/new', (req, res) => {
 })
 
 router.post('/', (req, res) => { 
+	console.log(req.body)
   createUser(req.body, "user")
 	.then(response => {
 		if (response.success === false) {

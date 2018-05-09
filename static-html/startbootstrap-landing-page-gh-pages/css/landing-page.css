@@ -1,0 +1,279 @@
+body {
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  color: black !important;
+}
+.animal-list-item {
+  margin-top: 3%;
+  padding: 3px;
+  border-top: 1px solid gray;
+}
+.city-picker {
+  width: 50%;
+}
+.rental-date-picker {
+  width:50%;
+}
+
+@media (max-width: 480px) {
+  .animal-list-item-pic {
+      width: 30%;
+
+  }
+  .animal-item-info-col {
+  padding-left: 35%
+  }
+  .animal-list-item-content {
+    font-size: 10px;
+    margin-bottom: 10px;
+  } 
+ 
+}
+@media (min-width: 480px) {
+  .animal-list-item-pic {
+      width: 22%;
+      display: inline-block;
+  }
+  .animal-item-info-col {
+  padding-left: 25%
+  }
+  .animal-list-item-content {
+    font-size: 14px;
+    margin-bottom: 8px;
+  } 
+}
+.animal-list-item-img {
+  width: 100%;
+  height: auto;
+  position: absolute;
+  
+}
+.animal-item-info-col {
+  width: 65%;  
+
+}
+ .rent-me-btn {
+  width: 13%;
+  }
+
+.call-to-action-background {
+  padding-top: 40px;
+  background-color: #687678;
+  padding-bottom: 75px;
+}
+.city-selection {
+  margin-top: 100px;
+}
+
+.city-dropdown {
+  background-color: white !important;
+}
+
+.city-button {
+  padding-right: 25px;
+  padding-left: 25px;
+  /*filter: drop-shadow(4px 4px 3px #687678);*/
+}
+
+.city-button:active {
+  filter: drop-shadow(6px 6px 12px #3c5c61);
+}
+.footer-gray {
+  background-color: #EDF8F9;
+}
+.green {
+  border-color: #447278;
+  color: #447278;
+}
+.green:hover {
+  background-color: #447278;
+  color: #EDF8F9;
+}
+.gray-background {
+  background-color: #f8f5f3 !important;
+}
+.gray-background:hover {
+  background-color: #17a2b8 !important;
+  color: white;
+}
+.hero-brand {
+  margin-top: 100px;
+  margin-bottom: 100px;
+}
+.hero-container {
+  min-height: 100vh;
+  padding-top: 75px;
+}
+.hero-logo {
+  padding-right: 34px !important;
+  text-align: right;
+
+}
+.hero-logo-text {
+  filter: drop-shadow(0px 0px 1px #687678);
+}
+.hero-logo-text:hover {
+  background: linear-gradient(135deg, #B85F17, #17a2b8);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  /*padding: 0.5em;*/
+  filter: drop-shadow(0px 0px 0px #687678);
+  
+}
+.hero-phrase {
+  padding-left: 32px !important;
+  border-left: 2px solid #B85F17;
+  text-align: left;
+}
+.link {
+  color:inherit;
+}
+
+.link:hover {
+  color: #00a2ba !important;
+  text-decoration: none;
+}
+.link-comp:hover {
+  color: #DB7A2C !important;
+  text-decoration: none;
+}
+
+.pos-relative {
+  position: relative;
+}
+
+.scroll-down-indicator {
+  margin-top: -110px;
+}
+.scroll-negative-margin {
+  margin-bottom: 40px;
+}
+.search-module {
+  padding-left: inherit;
+  padding-right: inherit;
+}
+.search-module-fullscreen {
+  padding-top: 20px;
+  background-color: #EDF8F9;
+  /*min-height: 100vh;*/
+}
+.search-fullscreen {
+  padding-top: 20px;
+  background-color: #687678;
+}
+.btn-dark-back {
+  background-color:  white !important;
+  color: #17a2b8 !important;
+}
+.btn-dark-back:hover {
+  background-color:  #17a2b8 !important;
+  color: white !important;
+}
+.prepend-search-text {
+  background-color:  #687678 !important;
+  color: white !important;
+}
+.user-icon:hover {
+ color: #00a2ba !important;
+}
+.user-top-nav {
+  margin-right: 10px;
+}
+@media (max-width: 767px) {
+  .hero-logo {
+  text-align: center;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+}
+  .hero-phrase {
+    padding-left: 0px !important;
+    text-align: center;
+    border-left: 0px solid #ebeced;
+  }
+}
+.showcase .showcase-text {
+  padding: 3rem;
+}
+
+.showcase .showcase-img {
+  min-height: 30rem;
+  background-size: cover;
+}
+
+@media (min-width: 768px) {
+  .showcase .showcase-text {
+    padding: 7rem;
+  }
+}
+
+.features-icons {
+  padding-top: 7rem;
+  padding-bottom: 7rem;
+}
+
+.features-icons .features-icons-item {
+  max-width: 20rem;
+}
+
+.features-icons .features-icons-item .features-icons-icon {
+  height: 7rem;
+}
+
+.features-icons .features-icons-item .features-icons-icon i {
+  font-size: 4.5rem;
+}
+
+.features-icons .features-icons-item:hover .features-icons-icon i {
+  font-size: 5rem;
+}
+
+.testimonials {
+  padding-top: 7rem;
+  padding-bottom: 7rem;
+}
+
+.testimonials .testimonial-item {
+  max-width: 18rem;
+}
+
+.testimonials .testimonial-item img {
+  max-width: 12rem;
+  box-shadow: 0px 5px 5px 0px #adb5bd;
+}
+
+.call-to-action {
+  position: relative;
+  background-color: #343a40;
+  background: url("../img/bg-masthead.jpg") no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  padding-top: 7rem;
+  padding-bottom: 7rem;
+}
+
+.call-to-action .overlay {
+  position: absolute;
+  background-color: #212529;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.3;
+}
+
+footer.footer {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}

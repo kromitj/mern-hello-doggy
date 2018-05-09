@@ -37,6 +37,7 @@ router.post('/', (req, res) => {
 	createUser(req.body, "admin")
 	.then(response => {
 		if (response.success === false) {
+			console.log(response)
 			const msg = errorMessages[response.error];	
 			return res.status(msg.status).json({ error: msg.error, message: msg.message})
 		} else if (response.success) {

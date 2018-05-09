@@ -1,0 +1,14 @@
+@media (max-width: 660px) {
+ .hero-logo {
+   font-size: 42px;
+   width: 50;
+}
+.hero-line {
+    font-size: 18px
+}
+.center-div
+{   
+    width: 100%;
+}
+
+}
