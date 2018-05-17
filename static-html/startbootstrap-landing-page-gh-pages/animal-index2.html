@@ -21,16 +21,17 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
     <link href="css/landing-page.css" rel="stylesheet">
+    <link href="css/new-css.css" rel="stylesheet">
 
   </head>
 
   <body>
 
     <!-- Navigation -->
-    <nav class="navbar static-top">
+    <nav class="navbar static-top bg-white nav-shadow">
        <ul class="navbar-nav ml-auto user-top-nav">
       <li class="nav-item active">
-        <a class="nav-link link" href="#">Hello Doggy<span class="sr-only">(current)</span></a>
+        <a class="nav-link link nav-logo" href="landing.html?#">Hello Doggy<span class="sr-only">(current)</span></a>
       </li>  
     </ul>
        <ul class="navbar-nav ml-auto user-top-nav">
@@ -41,14 +42,15 @@
     </nav>
 
     <!-- body conatiner -->
-    <main class="body-wrapper container-fluid">
+    <div class="body-wrapper">
+    <div class="page-wrapper container-fluid">
       <article class="row search-module-fullscreen">
-        <div class="offset-md-2 offset-lg-3 col-sm-12 col-xs-12 col-md-8 col-lg-6">
+        <div class="offset-md-2 offset-lg-3 offset-xl-4 col-sm-12 col-md-8 col-lg-6 col-xl-4 ">
           <!--  search model -->
           <section class="search-module">
             <div class="row">
               <div class="city-picker">
-                <label>Your City: </label>
+                <label class="text-white">Your City: </label>
                 <div class="dropdown show">
                   <a class="btn btn-outline-info dropdown-toggle btn-dark-back" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Chicago
@@ -61,7 +63,7 @@
                 </div>
               </div>
               <div class="rental-date-picker">
-                <label>Rental Date:</label>
+                <label class="text-white">Rental Date:</label>
                 <div class="form-group"> <!-- Date input -->
                   <!-- <label class="control-label text-white" for="date" >Date</label> -->
                   <input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text"/>
@@ -95,39 +97,169 @@
       </article><!-- end search-module-fullscreen -->
 
       <!-- animal-list -->
-        <article>
-          <div class="row">
-            <div class="animal-list-item offset-md-2 offset-lg-3 col-sm-12 col-xs-12 col-md-8 col-lg-6 pos-relative">
-              <div class="animal-list-item-pic pos-relative">
-                 <img src="https://loremflickr.com/320/240/dog" alt="Smiley face" class="media-object img-responsive animal-list-item-img">
-              </div>
-              <div class="animal-item-info-col">
-                <p class="animal-list-item-content">Buddy</p>
-                <p class="animal-list-item-content">Border Collie</p>
-                <p class="animal-list-item-content">PAWS CHICAGO</p>                
-              </div>
-              <div class="rent-me-btn">
-                <button>Rent Me</button>
-              </div>
+        <main class="main_wrap">
+          <div class="centerwrapper clearfix">
+            <div class="item_list_container">
+              <section class="item_list clearfix">
+                <ol class="itemlist">
+
+                  <li class="item-order__list-item js_co_item">
+                    <article class="item bg-white flexbox">
+                      <div class="pos_relative item__wrapper">
+
+                        <div class="item__image-area">
+                          <div class="item__image-wrapper pos-relative">
+                            <img src="https://loremflickr.com/320/240/dog" class="item__image disabled item__image--no-gallery"></img>
+                          </div>                          
+                        </div>
+                        <div class="item__flex-column">
+                          <div class="item__details">
+                            <div class="item__name">
+                              <h3 class="name__copytext m-0">Keihanaikukauakahdafsd </h3>
+                              <h4 class="name__copytext m-0">German Shepard</h4>
+                              <h4 class="name__copytext m-0">Paws Shelter</h4>
+                            </div>
+                          </div>
+                           <div class="item__rent_btn_wrap">
+                            <button class="btn rent_btn btn-outline-info">Rent</button>
+                          </div>
+
+                        </div>
+
+                      </div>
+                    </article>
+                    <article class="doggy-dropdown-wrapper">
+                      <h1>BLah</h1>
+                    </article>
+                  </li>
+
+                  <li class="item-order__list-item js_co_item">
+                    <article class="item bg-white flexbox">
+                      <div class="pos_relative item__wrapper">
+
+                        <div class="item__image-area">
+                          <div class="item__image-wrapper pos-relative">
+                            <img src="https://loremflickr.com/320/240/dog" class="item__image disabled item__image--no-gallery"></img>
+                          </div>                          
+                        </div>
+                        <div class="item__flex-column">
+                          <div class="item__details">
+                            <div class="item__name">
+                              <h3 class="name__copytext m-0">Buddy</h3>
+                              <h4 class="name__copytext m-0">German Shepard</h4>
+                              <h4 class="name__copytext m-0">Paws Shelter</h4>
+                            </div>
+                          </div>
+                           <div class="item__rent_btn_wrap">
+                            <button class="btn rent_btn btn-outline-info">Rent</button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </li>
+                 <li class="item-order__list-item js_co_item">
+                    <article class="item bg-white flexbox">
+                      <div class="pos_relative item__wrapper">
+
+                        <div class="item__image-area">
+                          <div class="item__image-wrapper pos-relative">
+                            <img src="https://loremflickr.com/320/240/dog" class="item__image disabled item__image--no-gallery"></img>
+                          </div>                          
+                        </div>
+                        <div class="item__flex-column">
+                          <div class="item__details">
+                            <div class="item__name">
+                              <h3 class="name__copytext m-0">Buddy</h3>
+                              <h4 class="name__copytext m-0">German Shepard</h4>
+                              <h4 class="name__copytext m-0">Paws Shelter</h4>
+                            </div>
+                          </div>
+                           <div class="item__rent_btn_wrap">
+                            <button class="btn rent_btn btn-outline-info">Rent</button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </li>
+                     <li class="item-order__list-item js_co_item">
+                    <article class="item bg-white flexbox">
+                      <div class="pos_relative item__wrapper">
+
+                        <div class="item__image-area">
+                          <div class="item__image-wrapper pos-relative">
+                            <img src="https://loremflickr.com/320/240/dog" class="item__image disabled item__image--no-gallery"></img>
+                          </div>                          
+                        </div>
+                        <div class="item__flex-column">
+                          <div class="item__details">
+                            <div class="item__name">
+                              <h3 class="name__copytext m-0">Buddy</h3>
+                              <h4 class="name__copytext m-0">German Shepard</h4>
+                              <h4 class="name__copytext m-0">Paws Shelter</h4>
+                            </div>
+                          </div>
+                           <div class="item__rent_btn_wrap">
+                            <button class="btn rent_btn btn-outline-info">Rent</button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </li>
+                  <li class="item-order__list-item js_co_item">
+                    <article class="item bg-white flexbox">
+                      <div class="pos_relative item__wrapper">
+
+                        <div class="item__image-area">
+                          <div class="item__image-wrapper pos-relative">
+                            <img src="https://loremflickr.com/320/240/dog" class="item__image disabled item__image--no-gallery"></img>
+                          </div>                          
+                        </div>
+                        <div class="item__flex-column">
+                          <div class="item__details">
+                            <div class="item__name">
+                              <h3 class="name__copytext m-0">Buddy</h3>
+                              <h4 class="name__copytext m-0">German Shepard</h4>
+                              <h4 class="name__copytext m-0">Paws Shelter</h4>
+                            </div>
+                          </div>
+                           <div class="item__rent_btn_wrap">
+                            <button class="btn rent_btn btn-outline-info">Rent</button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </li>
+                 <li class="item-order__list-item js_co_item">
+                    <article class="item bg-white flexbox">
+                      <div class="pos_relative item__wrapper">
+
+                        <div class="item__image-area">
+                          <div class="item__image-wrapper pos-relative">
+                            <img src="https://loremflickr.com/320/240/dog" class="item__image disabled item__image--no-gallery"></img>
+                          </div>                          
+                        </div>
+                        <div class="item__flex-column">
+                          <div class="item__details">
+                            <div class="item__name">
+                              <h3 class="name__copytext m-0">Buddy</h3>
+                              <h4 class="name__copytext m-0">German Shepard</h4>
+                              <h4 class="name__copytext m-0">Paws Shelter</h4>
+                            </div>
+                          </div>
+                           <div class="item__rent_btn_wrap">
+                            <button class="btn rent_btn btn-outline-info">Rent</button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </li>
+                </ol>
+              </section>
             </div>
-           
+            
           </div>
-          <div class="row">
-            <div class="animal-list-item offset-md-2 offset-lg-3 col-sm-12 col-xs-12 col-md-8 col-lg-6 pos-relative">
-              <div class="animal-list-item-pic pos-relative">
-                 <img src="https://loremflickr.com/320/240/dog" alt="Smiley face" class="media-object img-responsive animal-list-item-img">  
-              </div>
-              <div class="animal-item-info-col">
-              <p class="animal-list-item-content">Buddy</p>
-              <p class="animal-list-item-content">Border Collie</p>
-              <p class="animal-list-item-content">PAWS CHICAGO</p>
-                
-              </div>
-            </div>
-           
-          </div>
-        </article>      
-    </main>
+        </main>      
+    </div>
     
 
 
@@ -140,40 +272,43 @@
           <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
             <ul class="list-inline mb-2">
               <li class="list-inline-item">
-                <a href="#" class="link-comp">About</a>
+                <a href="#" class="link-comp text-white">
+                  <i class="fa fa-facebook fa-2x fa-fw "></i>
+                </a>
               </li>
-              <li class="list-inline-item">&sdot;</li>
               <li class="list-inline-item">
-                <a href="#" class="link-comp">Contact</a>
+                <a href="#" class="link-comp text-white">
+                  <i class="fa fa-twitter fa-2x fa-fw e"></i>
+                </a>
               </li>
-              <li class="list-inline-item">&sdot;</li>
+              
               <li class="list-inline-item">
-                <a href="#" class="link-comp">Terms of Use</a>
+                <a href="#" class="link-comp text-white">
+                  <i class="fa fa-instagram fa-2x fa-fw "></i>
+                </a>
               </li>
-              <li class="list-inline-item">&sdot;</li>
-              <li class="list-inline-item">
-                <a href="#" class="link-comp">Shelter Manager</a>
-              </li>
+              
+             
             </ul>
-            <p class="text-muted small mb-4 mb-lg-0">&copy; Hello Doggy 2018. All Rights Reserved.</p>
           </div>
           <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
             <ul class="list-inline mb-0">
               <li class="list-inline-item mr-3">
-                <a href="#" class="link-comp">
-                  <i class="fa fa-facebook fa-2x fa-fw"></i>
-                </a>
+                <a href="#" class="link-comp text-white">About</a>
               </li>
+              <li class="list-inline-item text-white">&sdot;</li>
               <li class="list-inline-item mr-3">
-                <a href="#" class="link-comp">
-                  <i class="fa fa-twitter fa-2x fa-fw"></i>
-                </a>
+                <a href="#" class="link-comp text-white">Contact</a>
               </li>
+              <li class="list-inline-item text-white">&sdot;</li>
               <li class="list-inline-item">
-                <a href="#" class="link-comp">
-                  <i class="fa fa-instagram fa-2x fa-fw"></i>
-                </a>
+                <a href="#" class="link-comp text-white">Terms of Use</a>
               </li>
+              <li class="list-inline-item text-white">&sdot;</li>
+               <li class="list-inline-item">
+                <a href="#" class="link-comp text-white">Shelter Manager</a>
+              </li>
+            <p class="small mb-4 mb-lg-0 text-white">&copy; Hello Doggy 2018. All Rights Reserved.</p>
             </ul>
           </div>
         </div>
@@ -185,6 +320,7 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+      <script src="index.js"></script>
     <script>
     $(document).ready(function(){
 

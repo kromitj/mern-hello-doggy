@@ -20,22 +20,26 @@
 
     <!-- Custom styles for this template -->
     <link href="css/landing-page.css" rel="stylesheet">
+    <link href="css/new-css.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
 
   </head>
 
-  <body>
+  <body class="bg-white">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-light static-top">
+    <nav class="navbar navbar-light static-top animated slideInDown">
        <ul class="navbar-nav ml-auto user-top-nav">
       <li class="nav-item active">
         <a class="nav-link link" href="#"><span class="icon-arrow-down"></span>    <span class="icon-user "></span><span class="sr-only">(current)</span></a>
       </li>  
     </ul>
     </nav>
+    <main class="main-wrap">
+      
 
     <!-- Masthead -->
-    <header class="hero-container text-center">
+    <header class="hero-container text-center animated slideInDown">
       <div class="container">
           <div class="col-md-10  mx-auto">
             <form>
@@ -47,17 +51,20 @@
                   <h4 class="">Introducing dog-friendly companies to human-friendly doggies</h4>
                 </div>
               </div>
-              <div class="form-row justify-content-center city-selection">
-                <div class="col-xs-12 center-block">
-                  <h4>Select City:</h4>
-                </div>                
-              </div>
-              <div class="form-row justify-content-center">
-                <div class="btn-toolbar col-xs-12 center-block" align="center" role="group" aria-label="Basic example">
-                  <button type="button" class="btn btn-outline-info city-button mx-3 ">Chi</button>
-                  <button type="button" class="btn btn-outline-info city-button mx-3 ">SF</button>
-                  <button type="button" class="btn btn-outline-info city-button mx-3 ">LA</button>
-                </div>                
+              <div class="city-selection">
+                <div class="form-row justify-content-center">
+                  <div class="col-xs-12 center-block">
+                    <h4>Select City:</h4>
+                  </div>                
+                </div>
+                <div class="form-row justify-content-center pick-city">
+                  <div class="btn-toolbar col-xs-12 center-block" align="center" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-outline-info city-button mx-3 ">Chi</button>
+                    <button type="button" class="btn btn-outline-info city-button mx-3 ">SF</button>
+                    <button type="button" class="btn btn-outline-info city-button mx-3 ">LA</button>
+                  </div>                
+                </div>
+                
               </div>
             </form>
           </div>
@@ -65,12 +72,12 @@
     </header>
 
     <!-- More Below Indicator -->
-    <section class="text-center scroll-negative-margin">
+    <section class="text-center scroll-negative-margin ">
       <div class="container">
         <div class="row">
           <div class="col-xl-9 mx-auto scroll-down-indicator">
               <a href="" class="link-comp">
-                <span>Scroll</span><br>
+                <span>More Below</span><br>
                 <span class="icon-arrow-down"></span>                   
               </a>
           </div>          
@@ -79,21 +86,23 @@
     </section>
 
 
+    </main>
     <!-- Call to Action -->
     <section class="text-center call-to-action-background">
       <div class="container">
         <div class="row">
           <div class="col-xl-9 mx-auto">
-            <h2 class="mb-4 text-white">Sign up to get Updates!</h2>
+            <h2 class="mb-4 text-white newsletter-statement">Sign up to get Updates!</h2>
+            <h2 class="newsletter-success d-none text-white">Cool! You will now recieve a periodic newsletter</h2>  
           </div>
-          <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <form>
+          <div class="col-md-10 col-lg-8 col-xl-7 mx-auto newsletter-form-wrapper">
+            <form class="">
               <div class="form-row">
                 <div class="col-12 col-md-9 mb-2 mb-md-0">
                   <input type="email" class="form-control form-control-lg " placeholder="Enter your email...">
                 </div>
                 <div class="col-12 col-md-3">
-                  <button type="submit" class="btn btn-block btn-lg btn-outline-info btn-dark-back">Sign up!</button>
+                  <button type="submit" class="btn btn-block btn-lg btn-outline-info btn-dark-back newsletter-sign-up-btn">Sign up!</button>
                 </div>
               </div>
             </form>
@@ -102,55 +111,61 @@
       </div>
     </section>
 
-    <!-- Footer -->
+       <!-- Footer -->
+   <!-- Footer -->
     <footer class="footer footer-gray">
       <div class="container">
         <div class="row">
           <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
             <ul class="list-inline mb-2">
               <li class="list-inline-item">
-                <a href="#" class="link-comp">About</a>
+                <a href="#" class="link-comp text-white">
+                  <i class="fa fa-facebook fa-2x fa-fw "></i>
+                </a>
               </li>
-              <li class="list-inline-item">&sdot;</li>
               <li class="list-inline-item">
-                <a href="#" class="link-comp">Contact</a>
+                <a href="#" class="link-comp text-white">
+                  <i class="fa fa-twitter fa-2x fa-fw e"></i>
+                </a>
               </li>
-              <li class="list-inline-item">&sdot;</li>
+              
               <li class="list-inline-item">
-                <a href="#" class="link-comp">Terms of Use</a>
+                <a href="#" class="link-comp text-white">
+                  <i class="fa fa-instagram fa-2x fa-fw "></i>
+                </a>
               </li>
-              <li class="list-inline-item">&sdot;</li>
-              <li class="list-inline-item">
-                <a href="#" class="link-comp">Shelter Manager</a>
-              </li>
+              
+             
             </ul>
-            <p class="text-muted small mb-4 mb-lg-0">&copy; Hello Doggy 2018. All Rights Reserved.</p>
           </div>
           <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
             <ul class="list-inline mb-0">
               <li class="list-inline-item mr-3">
-                <a href="#" class="link-comp">
-                  <i class="fa fa-facebook fa-2x fa-fw"></i>
-                </a>
+                <a href="#" class="link-comp text-white">About</a>
               </li>
+              <li class="list-inline-item text-white">&sdot;</li>
               <li class="list-inline-item mr-3">
-                <a href="#" class="link-comp">
-                  <i class="fa fa-twitter fa-2x fa-fw"></i>
-                </a>
+                <a href="#" class="link-comp text-white">Contact</a>
               </li>
+              <li class="list-inline-item text-white">&sdot;</li>
               <li class="list-inline-item">
-                <a href="#" class="link-comp">
-                  <i class="fa fa-instagram fa-2x fa-fw"></i>
-                </a>
+                <a href="#" class="link-comp text-white">Terms of Use</a>
+              </li>
+              <li class="list-inline-item text-white">&sdot;</li>
+               <li class="list-inline-item">
+                <a href="#" class="link-comp text-white">Shelter Manager</a>
               </li>
             </ul>
+            <p class="small mb-4 mb-lg-0 text-white">&copy; Hello Doggy 2018. All Rights Reserved.</p>
           </div>
         </div>
       </div>
     </footer>
 
+
     <!-- Bootstrap core JavaScript -->
-    <!-- <script src="vendor/jquery/jquery.min.js"></script> -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+      <script src="index.js"></script>
     <!-- <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script> -->
 
   </body>
